@@ -577,6 +577,7 @@
 					"-Objc",
 				);
 				PRODUCT_NAME = Barcodes;
+				SKIP_INSTALL = NO;
 				VALID_ARCHS = "armv7 armv7s";
 			};
 			name = Debug;
@@ -602,6 +603,7 @@
 				);
 				PRODUCT_NAME = Barcodes;
 				PROVISIONING_PROFILE = "";
+				SKIP_INSTALL = NO;
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "armv7 armv7s";
 			};
@@ -658,6 +660,7 @@
 					"-Objc",
 				);
 				PRODUCT_NAME = Barcodes;
+				SKIP_INSTALL = NO;
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "armv7 armv7s";
 			};
