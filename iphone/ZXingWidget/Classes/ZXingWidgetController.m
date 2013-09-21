@@ -322,7 +322,14 @@ static bool isIPad() {
   return !!is_ipad;
 }
 #endif
-    
+
+- (void)reset
+{
+    decoding = YES;
+    [overlayView setPoints:nil];
+    wasCancelled = NO;
+}
+
 - (void)initCapture {
 #if HAS_AVFF
   AVCaptureDevice* inputDevice =
@@ -398,6 +405,28 @@ static bool isIPad() {
 
   if (!self.prevLayer) {
     self.prevLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.captureSession];
+
+      float angle;
+      switch ([UIApplication sharedApplication].statusBarOrientation) {
+          case UIInterfaceOrientationLandscapeLeft:
+              angle = M_PI / 2;
+              break;
+              
+          case UIInterfaceOrientationLandscapeRight:
+              angle = -M_PI / 2;
+              break;
+              
+          case UIInterfaceOrientationPortrait:
+              angle = 0;
+              break;
+              
+          case UIInterfaceOrientationPortraitUpsideDown:
+              angle = M_PI;
+              break;
+      }
+
+    CATransform3D transform = CATransform3DMakeRotation(angle, 0, 0, 1.0);
+    self.prevLayer.transform = transform;
   }
   // NSLog(@"prev %p %@", self.prevLayer, self.prevLayer);
   self.prevLayer.frame = self.view.bounds;
