@@ -1,1 +1,4 @@
 target
+android/.idea
+zxing-android/.idea
+android/gen

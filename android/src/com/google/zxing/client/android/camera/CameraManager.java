@@ -54,15 +54,18 @@ public final class CameraManager {
   private boolean previewing;
   private int requestedFramingRectWidth;
   private int requestedFramingRectHeight;
+  private boolean portraitMode;
+
   /**
    * Preview frames are delivered here, which we pass on to the registered handler. Make sure to
    * clear the handler so it will only receive one message.
    */
   private final PreviewCallback previewCallback;
 
-  public CameraManager(Context context) {
+  public CameraManager(Context context, boolean portraitMode) {
     this.context = context;
-    this.configManager = new CameraConfigurationManager(context);
+    this.configManager = new CameraConfigurationManager(context, portraitMode);
+	this.portraitMode = portraitMode;
     previewCallback = new PreviewCallback(configManager);
   }
 

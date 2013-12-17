@@ -32,7 +32,6 @@ import com.google.zxing.client.android.result.ResultHandlerFactory;
 import com.google.zxing.client.android.result.supplement.SupplementalInfoRetriever;
 import com.google.zxing.client.android.share.ShareActivity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -76,7 +75,7 @@ import java.util.Map;
  * @author dswitkin@google.com (Daniel Switkin)
  * @author Sean Owen
  */
-public final class CaptureActivity extends Activity implements SurfaceHolder.Callback {
+public final class CaptureActivity extends BaseCaptureActivity implements SurfaceHolder.Callback {
 
   private static final String TAG = CaptureActivity.class.getSimpleName();
 
@@ -113,15 +112,18 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
   private BeepManager beepManager;
   private AmbientLightManager ambientLightManager;
 
-  ViewfinderView getViewfinderView() {
+  @Override
+  public ViewfinderView getViewfinderView() {
     return viewfinderView;
   }
 
+  @Override
   public Handler getHandler() {
     return handler;
   }
 
-  CameraManager getCameraManager() {
+  @Override
+  public CameraManager getCameraManager() {
     return cameraManager;
   }
 
@@ -151,7 +153,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     // want to open the camera driver and measure the screen size if we're going to show the help on
     // first launch. That led to bugs where the scanning rectangle was the wrong size and partially
     // off screen.
-    cameraManager = new CameraManager(getApplication());
+    cameraManager = new CameraManager(getApplication(), true);
 
     viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
     viewfinderView.setCameraManager(cameraManager);
@@ -318,24 +320,19 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
   public boolean onOptionsItemSelected(MenuItem item) {
     Intent intent = new Intent(Intent.ACTION_VIEW);
     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-    switch (item.getItemId()) {
-      case R.id.menu_share:
+    if (item.getItemId() == R.id.menu_share) {
         intent.setClassName(this, ShareActivity.class.getName());
         startActivity(intent);
-        break;
-      case R.id.menu_history:
+	} else if (item.getItemId() == R.id.menu_history) {
         intent.setClassName(this, HistoryActivity.class.getName());
         startActivityForResult(intent, HISTORY_REQUEST_CODE);
-        break;
-      case R.id.menu_settings:
+	} else if (item.getItemId() == R.id.menu_settings) {
         intent.setClassName(this, PreferencesActivity.class.getName());
         startActivity(intent);
-        break;
-      case R.id.menu_help:
+	} else if (item.getItemId() == R.id.menu_help) {
         intent.setClassName(this, HelpActivity.class.getName());
         startActivity(intent);
-        break;
-      default:
+	} else {
         return super.onOptionsItemSelected(item);
     }
     return true;
@@ -693,6 +690,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     builder.show();
   }
 
+  @Override
   public void restartPreviewAfterDelay(long delayMS) {
     if (handler != null) {
       handler.sendEmptyMessageDelayed(R.id.restart_preview, delayMS);

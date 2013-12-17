@@ -53,9 +53,11 @@ final class CameraConfigurationManager {
   private final Context context;
   private Point screenResolution;
   private Point cameraResolution;
+  private boolean portraitMode;
 
-  CameraConfigurationManager(Context context) {
+  CameraConfigurationManager(Context context, boolean portraitMode) {
     this.context = context;
+	this.portraitMode = portraitMode;
   }
 
   /**
@@ -121,8 +123,14 @@ final class CameraConfigurationManager {
       }
     }
 
+	if (this.portraitMode) {
+	  parameters.set("orientation", "portrait");
+	  camera.setDisplayOrientation(90);
+	}
+
     parameters.setPreviewSize(cameraResolution.x, cameraResolution.y);
     camera.setParameters(parameters);
+
 
     Camera.Parameters afterParameters = camera.getParameters();
     Camera.Size afterSize = afterParameters.getPreviewSize();
@@ -254,7 +262,7 @@ final class CameraConfigurationManager {
         continue;
       }
 
-      boolean isCandidatePortrait = realWidth < realHeight;
+      boolean isCandidatePortrait = (realWidth < realHeight) && (this.portraitMode == false);
       int maybeFlippedWidth = isCandidatePortrait ? realHeight : realWidth;
       int maybeFlippedHeight = isCandidatePortrait ? realWidth : realHeight;
       double aspectRatio = (double) maybeFlippedWidth / (double) maybeFlippedHeight;
